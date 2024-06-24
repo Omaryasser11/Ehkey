@@ -43,12 +43,11 @@ textarea:valid~label {
     -webkit-transition: all 0.225s ease;
     transition: all 0.225s ease;
     color: #062d1f;
-    ;
+
 }
 
 .section1Contact .styled-input {
-    float: left;
-    width: 293px;
+    width: 100%;
     margin: 1rem 0;
     position: relative;
     border-radius: 4px;
@@ -68,11 +67,11 @@ textarea:valid~label {
     color: #062d1f;
 }
 
-.styled-input.wide {
-    width: 650px;
-    max-width: 100%;
+// .styled-input.wide {
+//     width: 650px;
+//     max-width: 100%;
 
-}
+// }
 
 input,
 textarea {
@@ -105,7 +104,7 @@ textarea:focus~span {
 
 
 .input-container {
-    width: 650px;
+    width: 100%;
     max-width: 100%;
     margin: 20px auto 25px auto;
 }
@@ -136,6 +135,29 @@ textarea:focus~span {
     width: 100%;
 
 
+}
+
+.flexRSB1 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+}
+
+.flexR {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: flex-start;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.v {
+    width: 49.5%;
 }
 
 .section1Contact .container input,
@@ -176,31 +198,11 @@ input[type=checkbox]:checked+label {
     font-style: normal;
 }
 
-.left {
 
-
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: center;
-    justify-content: center;
-    align-items: center;
-
-}
-
-.mleft {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-content: center;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-}
 
 textarea {
     width: 100%;
-    min-height: 12.45em;
+    min-height: 13.6em;
     background-color: #d8f5e1;
 
 }
@@ -214,6 +216,19 @@ textarea {
     justify-content: flex-start;
     align-items: center;
     margin-bottom: 2rem;
+}
+
+.msg {
+    width: 50%;
+}
+
+.flexR {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
 }
 
 // Mobile styles
@@ -276,4 +291,60 @@ textarea {
     .section1Contact .styled-input {
         width: 100%;
     }
+
+    .flexR {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .flex {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .msg {
+        width: 100%;
+    }
+
+    .flexRSB1 {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        gap: 0;
+    }
+
+    .v {
+        width: 100%;
+    }
+}
+.container .row .flexR {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: flex-start;
+    justify-content: center;
+    align-items: flex-start;
+}
+.flexRSB1 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
 }

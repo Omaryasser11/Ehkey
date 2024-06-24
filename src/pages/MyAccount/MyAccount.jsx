@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 import MyOrders from "../../Compents/MyAccountCompents/MyOrders/MyOrders.jsx";
 import useRemoveAccount from "../../hooks/account/useRemoveAccount.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faIdBadge, faEnvelope, faUser, faSquarePhone, faEarthAmericas, faPenToSquare, faUserGroup, faWallet ,faFloppyDisk} from '@fortawesome/free-solid-svg-icons';
+import { faIdBadge, faEnvelope, faUser, faSquarePhone, faEarthAmericas, faPenToSquare, faUserGroup, faWallet, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 
 export default function MyAccount() {
   const { data, getAccountData } = useAccountData();

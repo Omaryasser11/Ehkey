@@ -9,12 +9,12 @@ const useGetTimeSlots = () => {
   const [slots, setSlots] = useState([]);
 
   const [totalPages, setTotalPages] = useState();
-
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const getTimeSlots = async (
-    data = { timezone: "UTC" },
+    data = { timezone: userTimeZone },
     _token,
     pageNumber = 1,
-    pageSize = 5
+    pageSize = 10
   ) => {
     try {
       const res = await apiClient.get(

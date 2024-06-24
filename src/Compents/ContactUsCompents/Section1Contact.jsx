@@ -45,62 +45,72 @@ export default function Section1Contact() {
           </h4>
         </div>
         <form className="row" onSubmit={handleSubmit}>
-          <div className="col-6 left">
-            <div className="col-xs-12">
-              <div className="styled-input wide">
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                />
-                <label>Name</label>
+          <div className="row flexR col-12">
+            <div className="col-6 flex">
+              <div className="col-12">
+                <div className="styled-input wide">
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label>Name</label>
+                </div>
+              </div>
+
+              <div className="col-12 flexRSB1">
+
+                <div className="col-6 v ">
+                  <div className="styled-input col-12">
+                    <input
+                      type="email" // Changed to "email" for email input
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                    <label>Email</label>
+                  </div>
+                </div>
+                <div className="col-6 v">
+                  <div className="styled-input col-12">
+                    <input
+                      type="text"
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleChange}
+                      required
+                    />
+                    <label>Phone Number</label>
+                  </div>
+                </div>
+
               </div>
             </div>
-            <div className="col-md-6 col-sm-12">
-              <div className="styled-input">
-                <input
-                  type="email" // Changed to "email" for email input
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-                <label>Email</label>
-              </div>
-            </div>
-            <div className="col-md-6 col-sm-12">
-              <div className="styled-input" style={{ float: "right" }}>
-                <input
-                  type="text"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  required
-                />
-                <label>Phone Number</label>
+            <div className="col-6 msg">
+              <div className="col-xs-12">
+                <div className="styled-input wide">
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                  ></textarea>
+                  <label>Message</label>
+                </div>
               </div>
             </div>
           </div>
-          <div className="col-6 left">
-            <div className="col-xs-12">
-              <div className="styled-input wide">
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                ></textarea>
-                <label>Message</label>
-              </div>
+          <div className="row">
+            <div className="col-xs-12 btn-C">
+              <button type="submit" className="btn-lrg submit-btn col-2">
+                Send Message
+              </button>
             </div>
           </div>
-          <div className="col-xs-12 btn-C">
-            <button type="submit" className="btn-lrg submit-btn col-2">
-              Send Message
-            </button>
-          </div>
+
           {success && (
             <div className="col-xs-12 success-message">
               Your message has been sent successfully!

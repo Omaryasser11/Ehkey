@@ -3,6 +3,9 @@ import "./MessagePage.scss";
 import useContactMessages from "../../../hooks/admin/contact/useContactMessages";
 import Pagination from "../../CompentsAdmin/Pagination/Pagination";
 import Swal from "sweetalert2";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+
 const MessagePage = () => {
   const [contactRequests, setContactRequests] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -10,6 +13,9 @@ const MessagePage = () => {
   const token = localStorage.getItem("authToken");
   const [searchEmail, setSearchEmail] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [modalShow, setModalShow] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [deleteRequestId, setDeleteRequestId] = useState(null); // State to track delete request id
 
   useEffect(() => {
     getContactMessages(token, currentPage);
@@ -36,7 +42,9 @@ const MessagePage = () => {
       setSearchResults([]);
     }
   };
-  const handleDelete = async (id,name) => {
+
+  const handleDelete = async (id, name) => {
+    setDeleteRequestId(id); // Set the delete request id to trigger modal
     Swal.fire({
       title: "Are you sure?",
       text: `Are you sure you want to delete ${name}'s message?`,
@@ -77,9 +85,22 @@ const MessagePage = () => {
             text: "Failed to delete message. Please try again later.",
             icon: "error"
           });
+        } finally {
+          setDeleteRequestId(null); // Reset delete request id
         }
+      } else {
+        setDeleteRequestId(null); // Reset delete request id if cancel
       }
     });
+  };
+
+  const openModal = (request) => {
+    setSelectedRequest(request);
+    setModalShow(true);
+  };
+
+  const closeModal = () => {
+    setModalShow(false);
   };
 
   const displayRequests = searchEmail ? searchResults : contactRequests;
@@ -104,20 +125,22 @@ const MessagePage = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
-              <th>Message</th>
-              <th>Action</th> {/* Add this header for delete button */}
+              <th>Message (First 5 Words)</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {displayRequests.map((request) => (
-              <tr key={request.id}>
+              <tr key={request.id} onClick={() => openModal(request)}>
                 <td>{request.name}</td>
                 <td>{request.email}</td>
                 <td>{request.phoneNumber}</td>
-                <td>{request.message}</td>
+                <td>{request.message.split(' ').slice(0, 5).join(' ')}</td>
                 <td>
-                  {/* Delete button */}
-                  <button className="delete" onClick={() => handleDelete(request.id,request.name)}>Delete</button>
+                  <button className="delete" onClick={(e) => {
+                    e.stopPropagation(); // Prevent event propagation to row click
+                    handleDelete(request.id, request.name);
+                  }}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -131,6 +154,19 @@ const MessagePage = () => {
           onPageChange={handlePageChange}
         />
       )}
+
+      {/* Bootstrap Modal */}
+      <Modal show={modalShow && !deleteRequestId} onHide={closeModal} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedRequest && selectedRequest.name}'s Message</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{selectedRequest && selectedRequest.message}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeModal}>Close</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

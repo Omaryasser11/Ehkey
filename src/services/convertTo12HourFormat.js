@@ -4,7 +4,7 @@ function convertTo12HourFormat(time24) {
   const hours12 = hours % 12 || 12; // Convert '0' or '12' hours to '12'
   const paddedMinutes = String(minutes).padStart(2, "0");
   const paddedSeconds = String(seconds).padStart(2, "0");
-  const time12 = `${hours12}:${paddedMinutes}:${paddedSeconds} ${period}`;
+  const time12 = `${hours12}:${paddedMinutes} ${period}`;
   return time12;
 }
 

@@ -12,7 +12,7 @@ const TimeSlotPage = () => {
   const { getTimeSlots, slots: fetchedSlots, totalPages } = useGetTimeSlots();
   const { addTimeSlot, success: addSuccess } = useAddTimeSlot();
   const { removeTimeSlot, success: removeSuccess, error: removeError } = useRemoveTimeSlot();
-
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const {
     activateTimeSlot,
     deactivateTimeSlot,
@@ -30,7 +30,7 @@ const TimeSlotPage = () => {
     from: "",
     to: "",
     duration: "",
-    timeZone: "UTC",
+    timeZone: userTimeZone,
     isActive: true,
   });
 
@@ -41,7 +41,12 @@ const TimeSlotPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getTimeSlots({ timezone: "UTC" }, token, currentPage);
+        // Determine the user's timezone dynamically
+
+
+        // Call getTimeSlots with the dynamically determined timezone
+        const data = await getTimeSlots({ timezone: userTimeZone }, token, currentPage);
+
         setSlots(data);
       } catch (error) {
         console.error('Error fetching time slots:', error);
@@ -66,23 +71,30 @@ const TimeSlotPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
+      // Assuming addTimeSlot returns a promise that resolves on success
       await addTimeSlot(formData, token);
+
+      // Clear the form data and set success message
       setFormData({
         day: "",
         from: "",
         to: "",
         duration: "",
-        timeZone: "UTC",
+        timeZone: userTimeZone,
         isActive: true,
       });
+
       Swal.fire({
         icon: 'success',
         title: 'Success!',
         text: 'Time slot added successfully!',
       });
+
     } catch (error) {
       console.error('Error adding time slot:', error);
+
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
@@ -146,7 +158,7 @@ const TimeSlotPage = () => {
       });
     }
   };
-  
+
   const handleDeactivateTimeSlot = async (id) => {
     try {
       await deactivateTimeSlot(token, id);
@@ -172,7 +184,7 @@ const TimeSlotPage = () => {
       });
     }
   };
-  
+
   const handlePageChange = (page) => setCurrentPage(page);
 
   return (
@@ -183,14 +195,22 @@ const TimeSlotPage = () => {
         <div className="time-slot-form">
           <h4>Add New Time Slot</h4>
           <form onSubmit={handleSubmit}>
-            <input
-              type="text"
+            <select
               name="day"
               value={formData.day}
               onChange={handleInputChange}
-              placeholder="Day (e.g., Sunday)"
               required
-            />
+            >
+              <option value="">Select a day</option>
+              <option value="Sunday">Sunday</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+            </select>
+
             <input
               type="time"
               name="from"
@@ -213,13 +233,13 @@ const TimeSlotPage = () => {
               placeholder="Duration (e.g., 01:00:00)"
               required
             />
-            <input
+            {/* <input
               type="text"
               name="timeZone"
               value={formData.timeZone}
               onChange={handleInputChange}
               required
-            />
+            /> */}
             <label>
               Available:
               <input
@@ -238,29 +258,35 @@ const TimeSlotPage = () => {
       ) : (
         <div className="time-slot-list">
           {slots && slots.length > 0 ? (
-            slots.map((slot) => (
-              <div className="time-slot" key={slot.id}>
-                <p>Day: {slot.day}</p>
-                <p>From: {convertTo12HourFormat(slot.from)}</p>
-                <p>To: {convertTo12HourFormat(slot.to)}</p>
-                <p>Duration: {slot.duration}</p>
-                <p>Available: {slot.isActive ? "Yes" : "No"}</p>
-                <div className="slot-actions">
-                  <button onClick={() => handleRemoveTimeSlot(slot.id)}>
-                    Remove
-                  </button>
-                  {slot.isActive ? (
-                    <button onClick={() => handleDeactivateTimeSlot(slot.id)}>
-                      Deactivate
-                    </button>
-                  ) : (
-                    <button onClick={() => handleActivateTimeSlot(slot.id)}>
-                      Activate
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))
+            <table className="time-slot-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Available</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {slots.map((slot) => (
+                  <tr key={slot.id}>
+                    <td>{slot.day}</td>
+                    <td>{convertTo12HourFormat(slot.from)}</td>
+                    <td>{convertTo12HourFormat(slot.to)}</td>
+                    <td>{slot.isActive ? "Yes" : "No"}</td>
+                    <td className="slot-actions">
+                      <button class="btn btn-danger  btn-sm" onClick={() => handleRemoveTimeSlot(slot.id)}>Remove</button>
+                      {slot.isActive ? (
+                        <button class="btn btn-danger  btn-sm" onClick={() => handleDeactivateTimeSlot(slot.id)}>Deactivate</button>
+                      ) : (
+                        <button className="btn btn-success  btn-sm " onClick={() => handleActivateTimeSlot(slot.id)}>Activate</button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <p>No time slots available.</p>
           )}
@@ -275,6 +301,7 @@ const TimeSlotPage = () => {
             </button>
           </div>
         </div>
+
       )}
     </div>
   );

@@ -44,3 +44,14 @@
     margin-top: 1rem;
 
 }
+
+@media screen and (max-width: 767px) {
+.flexR {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+}

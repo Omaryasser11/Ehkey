@@ -64,6 +64,8 @@ body {
   align-items: flex-start;
   align-content: flex-start;
   justify-content: space-between;
+  width: 100vw;
+  overflow-x: hidden;
 
 
   #root,

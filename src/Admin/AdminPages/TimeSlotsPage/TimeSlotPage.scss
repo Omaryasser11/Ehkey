@@ -36,18 +36,19 @@
                 }
             }
 
-            button {
-                padding: 5px 10px;
-                background-color: #15ac3b;
-                color: #fff;
-                border: none;
-                cursor: pointer;
-            }
+            //     button {
+            //         padding: 5px 10px;
+            //         background-color: #15ac3b;
+            //         color: #fff;
+            //         border: none;
+            //         cursor: pointer;
+            //     }
 
-            button:hover {
-                background-color: #064e1a;
-                transition: .4s;
-            }
+            //     button:hover {
+            //         background-color: #064e1a;
+            //         transition: .4s;
+            //     }
+            // }
         }
     }
 
@@ -80,18 +81,18 @@
                 justify-content: flex-end;
                 gap: 10px;
 
-                button {
-                    padding: 5px 10px;
-                    background-color:#0c5c3f;
-                    color: #fff;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                }
+                // button {
+                //     padding: 5px 10px;
+                //     background-color:#0c5c3f;
+                //     color: #fff;
+                //     border: none;
+                //     border-radius: 5px;
+                //     cursor: pointer;
+                // }
 
-                button:hover {
-                    background-color: #c82333;
-                }
+                // button:hover {
+                //     background-color: #c82333;
+                // }
             }
         }
     }
@@ -99,4 +100,8 @@
 
 .time-slot-page .btn {
     margin-top: 2rem;
+}
+
+tbody .btn {
+    margin: 0 1rem;
 }
