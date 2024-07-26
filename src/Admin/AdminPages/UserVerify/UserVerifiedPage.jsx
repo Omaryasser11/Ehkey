@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import "./UserVerifiedPage.scss";
-import useGetRecommendedEmails from "../../../hooks/admin/user/useGetRecommendedEmails";
-import Pagination from "../../CompentsAdmin/Pagination/Pagination";
 import useAddRecommendedEmail from "../../../hooks/admin/user/useAddRecommendedEmail";
 
 const UserVerifiedPage = ({ onBack }) => {
   const { addRecommendedEmail } = useAddRecommendedEmail();
-  const { getRecommendedEmails, data, totalPages } = useGetRecommendedEmails();
-  const [verifiedUsers, setVerifiedUsers] = useState([]);
   const [manualEntry, setManualEntry] = useState({ email: "" });
-  const [currentPage, setCurrentPage] = useState(1);
 
   const token = localStorage.getItem("authToken");
 
@@ -29,7 +24,6 @@ const UserVerifiedPage = ({ onBack }) => {
 
         const users = rows.map((row) => ({ email: row[1] }));
 
-        setVerifiedUsers((prevUsers) => [...prevUsers, ...users]);
         for (const user of users) {
           await addRecommendedEmail(user.email, token);
         }
@@ -39,32 +33,10 @@ const UserVerifiedPage = ({ onBack }) => {
     }
   };
 
-  useEffect(() => {
-    getRecommendedEmails(token, currentPage);
-  }, [currentPage]);
-
-  useEffect(() => {
-    if (data.length > 0) {
-      setVerifiedUsers((prevUsers) => [...prevUsers, ...data]);
-    }
-  }, [data]);
-
   const handleManualEntry = async () => {
     if (manualEntry.email) {
-      const newUsers = [...verifiedUsers, manualEntry];
-      setVerifiedUsers(newUsers);
-      setManualEntry({ email: "" });
       await addRecommendedEmail(manualEntry.email, token);
-    }
-  };
-
-  const handleChangePage = (page) => {
-    setCurrentPage(page);
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((prevPage) => prevPage + 1);
+      setManualEntry({ email: "" });
     }
   };
 
@@ -87,38 +59,7 @@ const UserVerifiedPage = ({ onBack }) => {
           <button onClick={handleManualEntry}>Add User</button>
         </div>
       </div>
-      {verifiedUsers.length > 0 && (
-        <div className="verified-users col-12">
-          <h2>Verified Users</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              {verifiedUsers.map((user, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{user.email}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      <Pagination
-        onPageChange={handleChangePage}
-        currentPage={currentPage}
-        totalPages={totalPages}
-      />
-      <div className="button-group">
-        <button onClick={onBack}>Back</button>
-        {currentPage < totalPages && (
-          <button onClick={handleNextPage}>Next</button>
-        )}
-      </div>
+
     </div>
   );
 };

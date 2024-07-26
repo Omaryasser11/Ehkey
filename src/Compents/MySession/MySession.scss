@@ -5,16 +5,18 @@
     align-content: center;
     justify-content: center;
     align-items: center;
+    width: 75%;
 
     h2 {
         margin-top: 1rem;
     }
+  
 }
 
 
 
 table {
-    width: 75%;
+    width: 100%;
     border-collapse: collapse;
 }
 
@@ -91,4 +93,7 @@ table th {
     .btnT {
         font-size: 1rem;
     }
+}
+.time-slot-list{
+    width: 75%;
 }

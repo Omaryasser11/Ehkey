@@ -173,6 +173,25 @@ textarea {
     font-weight: 500;
     margin-top: 0;
 }
+.container .row .flexR {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: flex-start;
+    justify-content: center;
+    align-items: flex-start;
+}
+.flexRSB1 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.15rem;
+}
+
 
 @media only screen and (max-width: 768px) {
     .styled-input {
@@ -329,22 +348,12 @@ textarea {
     .v {
         width: 100%;
     }
-}
-.container .row .flexR {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-content: flex-start;
-    justify-content: center;
-    align-items: flex-start;
-}
-.flexRSB1 {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-content: center;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1.25rem;
+    .container .row .flexR {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-content: flex-start;
+        justify-content: center;
+        align-items: center;
+    }
 }

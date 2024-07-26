@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Table, Form } from "react-bootstrap";
+import React, { useEffect, useState, useCallback } from "react";
+import { Table, Form, Button } from "react-bootstrap";
+import _ from 'lodash';
 import "./Table.scss";
 import CustomerBill from "../CompentsAdmin/CustomerBill/CustomerBill";
 import useGetPayments from "../../hooks/admin/payment/useGetPayments";
 import Pagination from "../CompentsAdmin/Pagination/Pagination";
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { ThreeDots } from 'react-loader-spinner'; // Importing a loader component from a library
+import Spiner from "../../Spinner/Spinner";
 
 const MyTableComponent = () => {
   const [selectedBillData, setSelectedBillData] = useState(null);
@@ -15,11 +18,30 @@ const MyTableComponent = () => {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [userId, setUserId] = useState('');
+  const [orderBy, setOrderBy] = useState('');
+  const [transactionId, setTransactionId] = useState('');
+  const [loading, setLoading] = useState(true); // Add loading state
   const token = localStorage.getItem("authToken");
 
   useEffect(() => {
-    getPayments(token, currentPage, fromDate, toDate);
-  }, [token, currentPage, fromDate, toDate]);
+    const fetchPayments = async () => {
+      setLoading(true); // Set loading to true before fetching
+      await getPayments(token, currentPage, 10, fromDate, toDate, userId, orderBy, transactionId, selectedStatus);
+      setLoading(false); // Set loading to false after fetching
+    };
+    fetchPayments();
+  }, [token, currentPage, fromDate, toDate, userId, orderBy, transactionId, selectedStatus]);
+
+  const debouncedSearch = useCallback(
+    _.debounce((query) => {
+      setSearchQuery(query);
+    }, 300), []
+  );
+
+  const handleSearchChange = (e) => {
+    debouncedSearch(e.target.value);
+  };
 
   const handleExitCustomerBill = () => {
     setSelectedBillData(null);
@@ -43,12 +65,14 @@ const MyTableComponent = () => {
     setCurrentPage(page);
   };
 
-  // Define filteredData using all filter criteria
-  const filteredData = originalData.filter((item) =>
+  const filteredData = _.filter(originalData, (item) =>
     item.user.email.toLowerCase().includes(searchQuery.toLowerCase()) &&
     (!fromDate || new Date(item.dateTimeStamp).toISOString().slice(0, 10) >= fromDate) &&
     (!toDate || new Date(item.dateTimeStamp).toISOString().slice(0, 10) <= toDate) &&
-    (!selectedStatus || item.status === selectedStatus)
+    (!selectedStatus || item.status === selectedStatus) &&
+    (!userId || item.user.id === userId) &&
+    (!transactionId || item.transactionId === parseInt(transactionId)) &&
+    (!orderBy || item.orderBy === orderBy)
   );
 
   const s2ab = (s) => {
@@ -61,28 +85,19 @@ const MyTableComponent = () => {
   };
 
   const exportToExcel = () => {
-    const filteredData = originalData.filter((item) =>
-      item.user.email.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      (!fromDate || new Date(item.dateTimeStamp).toISOString().slice(0, 10) >= fromDate) &&
-      (!toDate || new Date(item.dateTimeStamp).toISOString().slice(0, 10) <= toDate) &&
-      (!selectedStatus || item.status === selectedStatus)
-    );
+    const totalAmount = _.sumBy(filteredData, 'amount');
 
-    // Calculate total amount
-    const totalAmount = filteredData.reduce((total, item) => total + item.amount, 0);
-
-    // Prepare data for export
-    const exportData = filteredData.map(item => ({
+    const exportData = _.map(filteredData, item => ({
       id: item.id,
       username: item.user.name,
       email: item.user.email,
       total: item.amount,
       status: item.status,
       date: new Date(item.dateTimeStamp).toLocaleDateString(),
-      time: formatTimeToHHMM(item.dateTimeStamp)
+      time: formatTimeToHHMM(item.dateTimeStamp),
+      transactionId:item.transactionId
     }));
 
-    // Add total amount row
     exportData.push({
       id: 'Total',
       username: '',
@@ -93,10 +108,8 @@ const MyTableComponent = () => {
       time: ''
     });
 
-    // Convert data to worksheet
     const ws = XLSX.utils.json_to_sheet(exportData);
 
-    // Create workbook and save
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'FilteredData');
     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
@@ -104,92 +117,111 @@ const MyTableComponent = () => {
     saveAs(blob, 'filtered_data.xlsx');
   };
 
-  const totalAmount = filteredData.reduce((total, item) => total + item.amount, 0).toFixed(2);
+  const totalAmount = _.sumBy(filteredData, 'amount').toFixed(2);
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setFromDate('');
+    setToDate('');
+    setSelectedStatus('');
+    setUserId('');
+    setOrderBy('');
+    setTransactionId('');
+    setCurrentPage(1); // Optionally reset to the first page
+  };
+
   return (
-    <div className="col-12">
-
-
-      {selectedBillData ? (
+    <div className="table-page">
+      {loading ? ( // Show loader while loading
+        <Spiner />
+      ) : selectedBillData ? (
         <div>
           <CustomerBill data={selectedBillData} />
-          <button onClick={handleExitCustomerBill}>Exit</button>
+          <Button variant="secondary" onClick={handleExitCustomerBill}>Exit</Button>
         </div>
       ) : (
-        <div className="col-12">
-          <div className="col-12 flex Hedar">
-            <Form.Group controlId="dateRange" className="search2 flexR col-12">
-              <div className="col-4 flexR">
-                <label>From</label>
-                <Form.Control
-                  className="col-8"
-                  type="date"
-                  placeholder="From"
-                  value={fromDate}
-                  onChange={(e) => setFromDate(e.target.value)}
-                />
-              </div>
-
-              <div className="col-4 flexR">
-                <label>To</label>
-                <Form.Control
-                  className="col-8"
-                  type="date"
-                  placeholder="To"
-                  value={toDate}
-                  onChange={(e) => setToDate(e.target.value)}
-                />
-              </div>
-
-
-
-              <Form.Group controlId="statusFilter" className="col-4 flexR">
-                <label>Status</label>
-                <Form.Control
-                  as="select"
-                  className="col-8"
-                  value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                >
-                  <option value="">All Status</option>
-                  <option value="Successful">Successful</option>
-                  <option value="Unpaid">Unpaid</option>
-                  <option value="Failed">Failed</option>
-                </Form.Control>
-              </Form.Group>
-
+        <div>
+          <div className="header-container">
+            <Form.Group controlId="dateRangeFrom" className="inputInBar">
+              <Form.Label>From</Form.Label>
+              <Form.Control
+                type="date"
+                placeholder="From"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+              />
             </Form.Group>
-            <div className="col-12 flexR col-12 search3">
-              <Form.Group controlId="searchEmail" className="col-5 flexR">
-                <label>Email</label>
-                <Form.Control
-                  className="col-112"
-                  type="text"
-                  placeholder="Search by email"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </Form.Group>
-              <div className="col-6 Print">
-                <div className="col-6 flexR">
-                  <label>Total Amount</label>
-                  <p className="col-6">${totalAmount}</p>
-                </div>
-                <button className="col-6" onClick={exportToExcel}>Export to Excel</button>
-
-              </div>
-
-
-            </div>
+            <Form.Group controlId="dateRangeTo" className="inputInBar">
+              <Form.Label>To</Form.Label>
+              <Form.Control
+                type="date"
+                placeholder="To"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="orderStatus" className="DivSelect">
+              <Form.Label>Status</Form.Label>
+              <Form.Control
+                as="select"
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="SelectInpo"
+              >
+                <option value="">All</option>
+                <option value="Successful">Successful</option>
+                <option value="Unpaid">Unpaid</option>
+                <option value="Failed">Failed</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="searchEmail" className="inputInBar">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Search by email"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="userIdFilter" className="inputInBar">
+              <Form.Label>User ID</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Search by User ID"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="transactionIdFilter" className="inputInBar">
+              <Form.Label>Transaction ID</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Search by Transaction ID"
+                value={transactionId}
+                onChange={(e) => setTransactionId(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="orderByFilter" className="inputInBar">
+              <Form.Label>Order By</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Order By"
+                value={orderBy}
+                onChange={(e) => setOrderBy(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="flex">
+              <button className="Button" onClick={resetFilters}>Reset Filters</button>
+            </Form.Group>
           </div>
 
-
-
-          <Table striped bordered hover>
+          <Table striped bordered hover className="table">
             <thead>
               <tr>
                 <th>Bill No</th>
                 <th>Customer Name</th>
                 <th>Email</th>
+                <th>Transaction ID</th>
                 <th>Status</th>
                 <th>Date</th>
                 <th>Time</th>
@@ -200,24 +232,34 @@ const MyTableComponent = () => {
               {filteredData.map((item, index) => (
                 <tr key={index}>
                   <td>
-                    <button className="A" onClick={() => handleBillClick(item)}>
+                    <Button className="ID" variant="link" onClick={() => handleBillClick(item)}>
                       #{item.id}
-                    </button>
+                    </Button>
                   </td>
                   <td>{item.user.name}</td>
                   <td>{item.user.email}</td>
+                  <td>{item.transactionId ? item.transactionId : "Null"}</td>
                   <td>{item.status}</td>
                   <td>{new Date(item.dateTimeStamp).toLocaleDateString()}</td>
                   <td>{formatTimeToHHMM(item.dateTimeStamp)}</td>
-                  <td>{item.amount} EGP</td>
+                  <td>{item.amount} $</td>
                 </tr>
               ))}
             </tbody>
           </Table>
+
+          <div className="flexRSB">
+            <div className="action-container">
+              <Button variant="primary" onClick={exportToExcel}>Export to Excel</Button>
+            </div>
+            <div className="total-amount">
+              <label className="LBL">Total Amount: </label>
+              <p>${totalAmount}</p>
+            </div>
+          </div>
           <Pagination
             onPageChange={handlePageChange}
-            currentPage={
-              currentPage}
+            currentPage={currentPage}
             totalPages={totalPages}
           />
         </div>

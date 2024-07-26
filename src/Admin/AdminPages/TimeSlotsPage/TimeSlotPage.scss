@@ -1,107 +1,90 @@
-// TimeSlotPage.scss
-
-.time-slot-page {
+.message-page {
     padding: 20px;
 
     h1 {
-        text-align: center;
-    }
-
-    .time-slot-form {
+        font-size: 24px;
         margin-bottom: 20px;
-        text-align: center;
-
-        h2 {
-            margin-bottom: 10px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-
-            input[type='date'],
-            input[type='time'] {
-                padding: 5px;
-                font-size: 16px;
-            }
-
-            label {
-                display: flex;
-                align-items: center;
-                font-size: 16px;
-
-                input[type='checkbox'] {
-                    margin-left: 5px;
-                }
-            }
-
-            //     button {
-            //         padding: 5px 10px;
-            //         background-color: #15ac3b;
-            //         color: #fff;
-            //         border: none;
-            //         cursor: pointer;
-            //     }
-
-            //     button:hover {
-            //         background-color: #064e1a;
-            //         transition: .4s;
-            //     }
-            // }
-        }
     }
 
-    .time-slot-list {
-        width: 100%;
+    .search-container {
+        width: 50%;
+        margin-bottom: 1rem;
+    }
+
+    .date-filter-container {
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-content: center;
-        justify-content: center;
         align-items: center;
-        gap: 15px;
+        margin-bottom: 1rem;
+        
+        input,
+        select {
+            width: auto;
+            margin-right: 10px;
+        }
+    }
 
-        .time-slot {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
-            width: 60%;
+    .table {
+        width: 100%;
+        border-collapse: collapse;
 
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
 
+        th {
+            background-color: #39a17a;
+            font-weight: bold;
+            text-align: center;
+        }
 
-            p {
-                margin-bottom: 5px;
-                font-size: 16px;
+        td {
+            font-size: 1rem;
+            color: #0f4b35;
+            font-weight: 400;
+
+            &:nth-child(1) {
+                width: 15%;
             }
 
-            .slot-actions {
-                display: flex;
-                justify-content: flex-end;
-                gap: 10px;
+            &:nth-child(2) {
+                width: 20%;
+            }
 
-                // button {
-                //     padding: 5px 10px;
-                //     background-color:#0c5c3f;
-                //     color: #fff;
-                //     border: none;
-                //     border-radius: 5px;
-                //     cursor: pointer;
-                // }
+            &:nth-child(3) {
+                width: 15%;
+            }
 
-                // button:hover {
-                //     background-color: #c82333;
-                // }
+            &:nth-child(4) {
+                width: 20%;
+            }
+
+            &:nth-child(5) {
+                width: 25%;
             }
         }
     }
-}
 
-.time-slot-page .btn {
-    margin-top: 2rem;
-}
+    table tr:hover {
+        background-color: #39a17b47;
+    }
 
-tbody .btn {
-    margin: 0 1rem;
+    .delete {
+        background-color: #f44336;
+        padding: 5px 10px;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        width: 90%;
+
+        &:hover {
+            background-color: #a81d13;
+            transition: .4s;
+        }
+    }
 }
+.btnLFT{
+    margin-left: 1rem;
+    }

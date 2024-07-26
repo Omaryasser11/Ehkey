@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import TextField from "@mui/material/TextField";
+import CircularProgress from '@mui/material/CircularProgress';
 import "./index.scss";
 import { useAuth } from "../../store/auth";
 import useLogin from "../../hooks/account/useLogin"; // Import useLogin hook
@@ -20,6 +21,7 @@ const LoginForm = () => {
 
   const [errors, setErrors] = useState({});
   const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,6 +35,7 @@ const LoginForm = () => {
     e.preventDefault();
     const validationErrors = validateForm(formData);
     if (Object.keys(validationErrors).length === 0) {
+      setLoading(true); // Start loading
       try {
         const { success, data, error } = await login({
           email: formData.email,
@@ -41,12 +44,12 @@ const LoginForm = () => {
 
         if (success) {
           const { token, name, role } = data;
-          localStorage.setItem("authToken", token);
-          localStorage.setItem("user", name);
-          localStorage.setItem("role", role);
-
+          sessionStorage.setItem("authToken", token);
+          sessionStorage.setItem("user", name);
+          sessionStorage.setItem("role", role);
+        
           login1(token, name);
-
+        
           if (role === "SuperAdmin" || role === "FinanceAdmin" || role === "OperationAdmin") {
             navigate("/SA");
           } else {
@@ -55,9 +58,12 @@ const LoginForm = () => {
         } else {
           setLoginError(error || "An error occurred during login");
         }
+        
       } catch (error) {
         console.error("Login error:", error);
         setLoginError("An error occurred during login");
+      } finally {
+        setLoading(false); // Stop loading
       }
     } else {
       setErrors(validationErrors);
@@ -96,11 +102,10 @@ const LoginForm = () => {
 
         <div className="col-6" id="formSection">
           <div>
-            {" "}
             <h2 className="H2">Login</h2>
           </div>
           <form onSubmit={handleSubmit} className="col-10 login12">
-            <div className=" col-10">
+            <div className="col-10">
               <TextField
                 id="outlined-basic"
                 label="Email"
@@ -116,7 +121,7 @@ const LoginForm = () => {
                 <span className="error_Msg">{errors.email}</span>
               )}
             </div>
-            <div className=" col-10">
+            <div className="col-10">
               <TextField
                 id="outlined-basic"
                 label="Password"
@@ -134,8 +139,8 @@ const LoginForm = () => {
             </div>
             {loginError && <div>{loginError}</div>}
             <div className="col-10">
-              <button type="submit" className="col-12 btn">
-                Login
+              <button type="submit" className="col-12 btn_Login" disabled={loading}>
+                {loading ? <CircularProgress size={24} /> : "Login"}
               </button>
             </div>
           </form>
@@ -146,7 +151,7 @@ const LoginForm = () => {
               </Link>
               <span className="margin">Or</span>
               <Link className="Linko" to="/SignUp">
-                Not Have An Account ?
+                Not Have An Account?
               </Link>
             </span>
           </div>

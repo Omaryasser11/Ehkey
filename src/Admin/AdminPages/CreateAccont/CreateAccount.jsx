@@ -11,7 +11,7 @@ const CreateAccount = () => {
     phone: "",
     country: "",
     password: "",
-    role: "Client",
+    role: "",
   });
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -30,6 +30,9 @@ const CreateAccount = () => {
     setErrorMessage(""); // Clear previous error message
     setFieldErrors([]); // Clear previous field errors
     setSuccessMessage(""); // Clear previous success message
+  
+    console.log("Submitting form with data:", formData);
+  
     try {
       const response = await axios.post(domain + "/api/users", formData, {
         headers: {
@@ -46,7 +49,7 @@ const CreateAccount = () => {
           phone: "",
           country: "",
           password: "",
-          role: "Client",
+          role: "",
         });
       }
     } catch (error) {
@@ -60,7 +63,7 @@ const CreateAccount = () => {
       console.error("Error creating user:", error);
     }
   };
-
+  
   return (
     <div className="create-account-form mainPage">
       <h2>Add User</h2>
@@ -150,10 +153,11 @@ const CreateAccount = () => {
           <div className="col-10">
             <label>Role:</label>
             <select name="role" value={formData.role} onChange={handleChange}>
-              <option value="Client">User</option>
+              <option value="Client">Client</option>
+              <option value="Admin">Admin</option>
               <option value="SuperAdmin">Super Admin</option>
-              <option value="financeAdmin">Finance Admin</option>
-              <option value="operationAdmin">Operation Admin</option>
+              <option value="FinanceAdmin">Finance Admin</option>
+              <option value="OperationAdmin">Operation Admin</option>
             </select>
           </div>
         </div>

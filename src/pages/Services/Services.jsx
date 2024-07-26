@@ -7,7 +7,7 @@ import { useRecoilState } from 'recoil';
 import { productListState, cartState } from '../../store/index';
 import Product from '../Products/Product';
 import APIClient from '../../services/api-service'; // Adjust the path as per your project structure
-
+import Spiner from '../../Spinner/Spinner';
 const client = new APIClient('/packages'); // Specify the endpoint for packages
 
 function Services() {
@@ -43,7 +43,15 @@ function Services() {
     }, [setProductList]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className="loader">
+            <Spiner/>
+        </div>
+
+
+
+
+
+
     }
 
     if (error) {

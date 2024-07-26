@@ -5,7 +5,7 @@ import { GridLoader } from 'react-spinners';
 
 const Spiner = () => {
     return (
-        <div className="spinner flex Main2">
+        <div className="spinner flex">
             <GridLoader color="#25634c" />
             <span>Loading...</span>
         </div>

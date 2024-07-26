@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Section1Contact.scss";
 import useContact from "../../hooks/contact/useContact";
+import Spiner from "../../Spinner/Spinner";
 
 export default function Section1Contact() {
   const { success, error, submitContactForm } = useContact();
@@ -10,6 +11,7 @@ export default function Section1Contact() {
     phoneNumber: "",
     message: "",
   });
+  const [loading, setLoading] = useState(false); // Loading state
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,6 +23,7 @@ export default function Section1Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
     try {
       await submitContactForm(formData);
       setFormData({
@@ -31,8 +34,11 @@ export default function Section1Contact() {
       });
     } catch (error) {
       console.error("Form submission failed", error);
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
+
   return (
     <section className="col-12 section1Contact">
       <div className="container">
@@ -59,13 +65,11 @@ export default function Section1Contact() {
                   <label>Name</label>
                 </div>
               </div>
-
               <div className="col-12 flexRSB1">
-
-                <div className="col-6 v ">
+                <div className="col-6 v">
                   <div className="styled-input col-12">
                     <input
-                      type="email" // Changed to "email" for email input
+                      type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
@@ -86,7 +90,6 @@ export default function Section1Contact() {
                     <label>Phone Number</label>
                   </div>
                 </div>
-
               </div>
             </div>
             <div className="col-6 msg">
@@ -105,8 +108,8 @@ export default function Section1Contact() {
           </div>
           <div className="row">
             <div className="col-xs-12 btn-C">
-              <button type="submit" className="btn-lrg submit-btn col-2">
-                Send Message
+              <button type="submit" className="btn-lrg submit-btn col-2" disabled={loading}>
+                {loading ? "Sending..." : "Send Message"}
               </button>
             </div>
           </div>
@@ -118,6 +121,11 @@ export default function Section1Contact() {
           )}
           {error && <div className="col-xs-12 error-message">{error}</div>}
         </form>
+        {loading && (
+          <div className="loader">
+            <Spiner />
+          </div>
+        )}
       </div>
     </section>
   );

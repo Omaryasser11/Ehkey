@@ -9,9 +9,23 @@ const useGetReservations = () => {
   const [success, setSuccess] = useState(false);
   const [totalPages, setTotalPages] = useState();
 
-  const getReservations = async (token, pageNumber = 1, pageSize = 10) => {
+  const getReservations = async (
+    token,
+    pageNumber = 1,
+    pageSize = 10,
+    fromDate = null,
+    toDate = null,
+    email = null,
+    status = null
+  ) => {
     try {
-      const res = await apiClient.get({ pageNumber, pageSize }, token);
+      const queryParams = { pageNumber, pageSize };
+      if (fromDate) queryParams.fromDate = fromDate;
+      if (toDate) queryParams.toDate = toDate;
+      if (email) queryParams.email = email;
+      if (status) queryParams.status = status;
+
+      const res = await apiClient.get(queryParams, token);
 
       setError("");
       setSuccess(true);

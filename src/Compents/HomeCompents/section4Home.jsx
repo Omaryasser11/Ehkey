@@ -27,20 +27,24 @@ function Section10Home() {
                         <img className='two2' src={one} alt="" />
                         <p>Golden Package</p>
                         <span>We Provide One Session <br /> .</span>
-                        <Link className='btn' to="Services">Add to Cart</Link>
+                        <Link className='btn b11' to="Services">Add to Cart</Link>
                     </div>
                     <div className="col-4 card" data-aos="fade-down" data-aos-duration='1500' >
                         <img className='two2' src={Two} alt="" />
                         <p>Sliver Package</p>
                         <span>We Provide Five Session Plus Two Seesion Free</span>
-                        <Link className='btn' to="Services">Add to Cart</Link>
+                        <Link className='btn b11' to="Services">Add to Cart</Link>
                     </div>
-                    <div className="col-4 card" data-aos='fade-left' data-aos-duration='1500'>
-                        <img src={three} alt="" />
+                    <div className="col-4 card" data-aos="fade-down" data-aos-duration='1500' >
+                        <img className='two2' src={three} alt="" />
                         <p>perimum Package</p>
                         <span>We Provide Five Session Plus Two Seesion Free</span>
-                        <Link className='btn' to="Services">Add to Cart</Link>
+                        <Link className='btn b11' to="Services">Add to Cart</Link>
                     </div>
+
+
+
+
                 </div>
             </div>
         </section>

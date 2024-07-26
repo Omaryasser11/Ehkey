@@ -27,18 +27,19 @@ export const AuthProvider = ({ children }) => {
 
 
     const login1 = (token, user) => {
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('user', user);
+        sessionStorage.setItem('authToken', token);
+        sessionStorage.setItem('user', user);
         setIsAuthenticated(true);
         setUser(user);
         resetLogoutTimer(); // Reset the timer on login
     };
     const logout = () => {
 
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('authToken');
+        sessionStorage.removeItem('user');
         setIsAuthenticated(false);
         setUser(null);
+        sessionStorage.clear();
         localStorage.clear();
         if (logoutTimer) {
             clearTimeout(logoutTimer);

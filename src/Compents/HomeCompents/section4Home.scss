@@ -94,7 +94,7 @@
 }
 
 
- .two .two2  {
+.two .two2 {
     height: 23vh;
     width: 23vh;
     margin-top: -6.5rem;
@@ -102,10 +102,17 @@
 
 .b11:hover {
     transition: 0.7s ease;
-    background-color: #25634Cff;
+    background-color: white;
     // transform: translateX(50px); /* Adjust the distance as needed */
-    color: white;
+    color: #25634Cff;
 }
+
+.b11 {
+    background-color: #25634Cff;
+    color: white;
+    margin-top: .5rem;
+}
+
 
 // .hover-.b11 {
 

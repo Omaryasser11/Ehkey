@@ -6,8 +6,25 @@
         margin-bottom: 20px;
     }
 
-    table {
+    .search-container {
         width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .date-filter-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        input, select {
+            margin-right: 1rem;
+            flex: 1;
+        }
+    }
+
+    .table {
+        width: 100%;
+        table-layout: fixed; // Prevent scrolling
         border-collapse: collapse;
 
         th,
@@ -15,68 +32,62 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            overflow: hidden; // Prevent overflow
+            text-overflow: ellipsis;
+            white-space: nowrap; // Prevent line breaks
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #39a17a;
             font-weight: bold;
+            text-align: center;
+        }
+
+        tr:hover {
+            background-color: #39a17b47;
         }
 
         td {
             font-size: 1rem;
             color: #0f4b35;
-
             font-weight: 400;
 
             &:nth-child(1) {
                 width: 15%;
             }
-
             &:nth-child(2) {
                 width: 20%;
             }
-
             &:nth-child(3) {
                 width: 15%;
             }
-
             &:nth-child(4) {
-                width: 40%;
+                width: 15%;
             }
-
             &:nth-child(5) {
+                width: 25%;
+            }
+            &:nth-child(6) {
                 width: 10%;
             }
         }
     }
+
+    .delete {
+        background-color: #f44336;
+        padding: 5px 10px;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        width: 90%;
+    }
+
+    .delete:hover {
+        background-color: #a81d13;
+        transition: .4s;
+    }
 }
-
-
-.search-container {
-    width: 50%;
-    margin-bottom: 1rem;
-}
-
-.message-page table th {
-    background-color: #39a17a;
-    font-weight: bold;
-    text-align: center;
-}
-
-table tr:hover {
-    background-color: #39a17b47;
-}
-
-.delete {
-    background-color: #f44336;
-    padding: 5px 10px;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    width: 90%;
-}
-
-.delete:hover {
-    background-color: #a81d13;
-    transition: .4s;
+.table-responsive {
+    overflow-x: unset;
+    -webkit-overflow-scrolling: touch;
 }

@@ -14,14 +14,14 @@ export default function Packages() {
       <div className="flexR col-12 Bar">
         <button
           onClick={() => handleSectionClick("Book")}
-          className={`btn ${activeSection === "Book" ? "clicked" : "Mbtn"} `}
+          className={`btn1 ${activeSection === "Book" ? "clicked" : "Mbtn"} `}
         >
           {" "}
           Book Session
         </button>
         <button
           onClick={() => handleSectionClick("mySession")}
-          className={`btn ${activeSection === "mySession" ? "clicked" : "Mbtn"
+          className={`btn1 ${activeSection === "mySession" ? "clicked" : "Mbtn"
             } `}
         >
           My sessions

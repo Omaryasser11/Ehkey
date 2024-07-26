@@ -1,45 +1,69 @@
-// UserVerifiedPage.scss
-
 .user-verified-page {
     padding: 20px;
 
     h1 {
         text-align: center;
+        margin-bottom: 20px;
     }
 
-    .file-upload {
-        margin: 20px 0;
-        text-align: center;
+    .input-section {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 6rem;
+        margin-bottom: 1px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: center;
 
-        input[type='file'] {
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    }
+        .file-upload {
+            margin-bottom: 20px;
+            text-align: center;
 
-    .verified-users {
-        margin-top: 20px;
-
-        h2 {
-            margin-bottom: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-
-            th,
-            td {
+            input[type='file'] {
                 padding: 10px;
+                font-size: 16px;
                 border: 1px solid #ccc;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+        }
+
+        .manual-entry {
+            display: flex;
+            align-items: center;
+
+            input[type='email'] {
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-right: 10px;
             }
 
-            th {
-                background-color: #f2f2f2;
-                font-weight: bold;
+            button {
+                width: 8rem;
+                height: 2.7rem;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                flex-wrap: nowrap;
+                align-content: center;
+                justify-content: center;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                font-size: 1rem;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #0056b3;
+                }
             }
         }
     }
@@ -55,10 +79,11 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-        }
+            margin: 0 10px;
 
-        button:hover {
-            background-color: #0056b3;
+            &:hover {
+                background-color: #0056b3;
+            }
         }
     }
 }

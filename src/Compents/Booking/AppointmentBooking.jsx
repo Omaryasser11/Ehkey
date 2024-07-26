@@ -5,11 +5,13 @@ import useBookASession from "../../hooks/sessions/useBookASession";
 import convertTo12HourFormat from "../../services/convertTo12HourFormat";
 import useUpdateSession from "../../hooks/sessions/useUpdateSession";
 import Swal from "sweetalert2";
+
 const AppointmentBooking = ({ id = null }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedSlot, setSelectedSlot] = useState();
   const [availableAppointments, setAvailableAppointments] = useState([]);
-
+  const [loading, setLoading] = useState(false);
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const { getAvailableTimeSlots, slots } = useAvailableTimeSlots();
   const { bookASession, error, success: bookSuccess } = useBookASession();
   const { updateSession } = useUpdateSession();
@@ -42,10 +44,13 @@ const AppointmentBooking = ({ id = null }) => {
 
   useEffect(() => {
     if (selectedDate) {
-      getAvailableTimeSlots({ date: selectedDate, timezone: "UTC" }, token);
+      setLoading(true);
+      getAvailableTimeSlots({ date: selectedDate, timezone: userTimeZone }, token)
+        .finally(() => setLoading(false));
       setSelectedSlot("");
     }
   }, [selectedDate]);
+
   useEffect(() => {
     setAvailableAppointments(slots);
   }, [slots]);
@@ -53,27 +58,34 @@ const AppointmentBooking = ({ id = null }) => {
   const handleSelectSlot = (slotId) => {
     setSelectedSlot(slots.find((slot) => slot.id === slotId));
   };
+
   const handleConfirmABook = () => {
     const data = {
       date: selectedDate,
       timeSlotId: selectedSlot.id,
-      timeZone: "UTC",
+      timeZone: userTimeZone,
     };
+    setLoading(true);
     if (id == null) {
-      bookASession(data, token);
-      Swal.fire({
-        title: "Good job!",
-        text: `Your Session Date is  ${data.date}`,
-        icon: "success"
-      });
+      bookASession(data, token)
+        .then(() => {
+          Swal.fire({
+            title: "Good job!",
+            text: `Your Session Date is  ${data.date}`,
+            icon: "success"
+          });
+        })
+        .finally(() => setLoading(false));
     } else {
-
-      updateSession(id, data, token);
-      Swal.fire({
-        title: "Good job!",
-        text: `Your Session Date Updeted sucessfully in ${data.date} `,
-        icon: "success"
-      });
+      updateSession(id, data, token)
+        .then(() => {
+          Swal.fire({
+            title: "Good job!",
+            text: `Your Session Date Updated successfully to ${data.date} `,
+            icon: "success"
+          });
+        })
+        .finally(() => setLoading(false));
     }
     setSelectedDate("");
     setSelectedSlot(null);
@@ -102,22 +114,25 @@ const AppointmentBooking = ({ id = null }) => {
         <div className="appointment-booking-M ">
           <div className="time-slots col-9">
             <label>Available Time Slots:</label>
-
-            <ul>
-              {availableAppointments.map((appointment) => (
-                <li
-                  id="LI"
-                  key={appointment.id}
-                  onClick={() => handleSelectSlot(appointment.id)}
-                  className={
-                    selectedSlot === appointment.time ? "selected" : ""
-                  }
-                >
-                  {convertTo12HourFormat(appointment.from)} -{" "}
-                  {convertTo12HourFormat(appointment.to)} ({appointment.day})
-                </li>
-              ))}
-            </ul>
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <ul>
+                {availableAppointments.map((appointment) => (
+                  <li
+                    id="LI"
+                    key={appointment.id}
+                    onClick={() => handleSelectSlot(appointment.id)}
+                    className={
+                      selectedSlot === appointment.time ? "selected" : ""
+                    }
+                  >
+                    {convertTo12HourFormat(appointment.from)} -{" "}
+                    {convertTo12HourFormat(appointment.to)} ({appointment.day})
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
         {selectedSlot && (
@@ -131,8 +146,8 @@ const AppointmentBooking = ({ id = null }) => {
               Time: {convertTo12HourFormat(selectedSlot.from)}
             </p>
             <div className="col-12 flex">
-              <button onClick={handleConfirmABook} className="Add col-3">
-                Confirm
+              <button onClick={handleConfirmABook} className="Add col-3" disabled={loading}>
+                {loading ? "Loading..." : "Confirm"}
               </button>
             </div>
           </div>
@@ -150,7 +165,6 @@ const AppointmentBooking = ({ id = null }) => {
             className="P col-12 flex"
             style={{ fontSize: "12px", color: "green" }}
           >
-
             Session Booked Successfully
           </p>
         )}

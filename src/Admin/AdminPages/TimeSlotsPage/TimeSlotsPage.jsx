@@ -7,6 +7,8 @@ import Pagination from "../../CompentsAdmin/Pagination/Pagination";
 import useAddTimeSlot from "../../../hooks/admin/time-slots/useAddTimeSlot";
 import useUpdateTimeSlotStatus from "../../../hooks/admin/time-slots/useUpdateTimeSlotStatus";
 import Swal from 'sweetalert2';
+import { Spinner } from "react-bootstrap";
+import Spiner from "../../../Spinner/Spinner";
 
 const TimeSlotPage = () => {
   const { getTimeSlots, slots: fetchedSlots, totalPages } = useGetTimeSlots();
@@ -22,6 +24,7 @@ const TimeSlotPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [slots, setSlots] = useState([]);
   const [showAddTimeSlotPage, setShowAddTimeSlotPage] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("authToken");
 
@@ -40,13 +43,11 @@ const TimeSlotPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         // Determine the user's timezone dynamically
-
-
         // Call getTimeSlots with the dynamically determined timezone
         const data = await getTimeSlots({ timezone: userTimeZone }, token, currentPage);
-
         setSlots(data);
       } catch (error) {
         console.error('Error fetching time slots:', error);
@@ -55,6 +56,8 @@ const TimeSlotPage = () => {
           title: 'Oops...',
           text: 'Failed to fetch time slots. Please try again later.',
         });
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -71,6 +74,7 @@ const TimeSlotPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       // Assuming addTimeSlot returns a promise that resolves on success
@@ -91,7 +95,6 @@ const TimeSlotPage = () => {
         title: 'Success!',
         text: 'Time slot added successfully!',
       });
-
     } catch (error) {
       console.error('Error adding time slot:', error);
 
@@ -100,6 +103,8 @@ const TimeSlotPage = () => {
         title: 'Oops...',
         text: 'Failed to add time slot. Please try again later.',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -114,6 +119,7 @@ const TimeSlotPage = () => {
       confirmButtonText: 'Yes, delete it!'
     }).then(async (result) => {
       if (result.isConfirmed) {
+        setLoading(true);
         try {
           await removeTimeSlot(token, id, (deletedId) => {
             setSlots((prevSlots) => prevSlots.filter(slot => slot.id !== deletedId));
@@ -130,11 +136,15 @@ const TimeSlotPage = () => {
             title: 'Oops...',
             text: removeError || 'Failed to delete time slot. Please try again later.',
           });
+        } finally {
+          setLoading(false);
         }
       }
     });
   };
+
   const handleActivateTimeSlot = async (id) => {
+    setLoading(true);
     try {
       await activateTimeSlot(token, id);
       const updatedSlots = slots.map(slot => {
@@ -156,10 +166,13 @@ const TimeSlotPage = () => {
         title: 'Oops...',
         text: 'Failed to activate time slot. Please try again later.',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDeactivateTimeSlot = async (id) => {
+    setLoading(true);
     try {
       await deactivateTimeSlot(token, id);
       // Update slots after deactivation
@@ -182,6 +195,8 @@ const TimeSlotPage = () => {
         title: 'Oops...',
         text: 'Failed to deactivate time slot. Please try again later.',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -192,11 +207,15 @@ const TimeSlotPage = () => {
       <h2>Time Slot Management</h2>
 
       {showAddTimeSlotPage ? (
-        <div className="time-slot-form">
-          <h4>Add New Time Slot</h4>
-          <form onSubmit={handleSubmit}>
+        <div className="time-slot-form card p-4 mb-4">
+        <h4 className="card-title">Add New Time Slot</h4>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group mb-3">
+            <label htmlFor="day">Day</label>
             <select
+              id="day"
               name="day"
+              className="form-control"
               value={formData.day}
               onChange={handleInputChange}
               required
@@ -210,54 +229,74 @@ const TimeSlotPage = () => {
               <option value="Friday">Friday</option>
               <option value="Saturday">Saturday</option>
             </select>
+          </div>
 
+          <div className="form-group mb-3">
+            <label htmlFor="from">From</label>
             <input
               type="time"
+              id="from"
               name="from"
+              className="form-control"
               value={formData.from}
               onChange={handleInputChange}
               required
             />
+          </div>
+
+          <div className="form-group mb-3">
+            <label htmlFor="to">To</label>
             <input
               type="time"
+              id="to"
               name="to"
+              className="form-control"
               value={formData.to}
               onChange={handleInputChange}
               required
             />
+          </div>
+
+          <div className="form-group mb-3">
+            <label htmlFor="duration">Duration</label>
             <input
               type="text"
+              id="duration"
               name="duration"
+              className="form-control"
               value={formData.duration}
               onChange={handleInputChange}
               placeholder="Duration (e.g., 01:00:00)"
               required
             />
-            {/* <input
-              type="text"
-              name="timeZone"
-              value={formData.timeZone}
-              onChange={handleInputChange}
-              required
-            /> */}
+          </div>
+
+          <div className="form-group mb-3">
             <label>
               Available:
               <input
                 type="checkbox"
                 name="isActive"
+                className="ms-2"
                 checked={formData.isActive}
                 onChange={handleInputChange}
               />
             </label>
-            <button type="submit">Add Time Slot</button>
-          </form>
-          <button onClick={() => setShowAddTimeSlotPage(false)} className="btn">
-            Available Time Slots
+          </div>
+
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? "Loading..." : "Add Time Slot"}
           </button>
-        </div>
+        </form>
+        <button onClick={() => setShowAddTimeSlotPage(false)} className="btn btn-link mt-3">
+          Available Time Slots
+        </button>
+      </div>
       ) : (
         <div className="time-slot-list">
-          {slots && slots.length > 0 ? (
+          {loading ? (
+          <Spiner/>
+          ) : slots && slots.length > 0 ? (
             <table className="time-slot-table">
               <thead>
                 <tr>
@@ -276,9 +315,9 @@ const TimeSlotPage = () => {
                     <td>{convertTo12HourFormat(slot.to)}</td>
                     <td>{slot.isActive ? "Yes" : "No"}</td>
                     <td className="slot-actions">
-                      <button class="btn btn-danger  btn-sm" onClick={() => handleRemoveTimeSlot(slot.id)}>Remove</button>
+                      <button class="btn btn-danger  btn-sm btnLFT" onClick={() => handleRemoveTimeSlot(slot.id)}>Remove</button>
                       {slot.isActive ? (
-                        <button class="btn btn-danger  btn-sm" onClick={() => handleDeactivateTimeSlot(slot.id)}>Deactivate</button>
+                        <button class="btn btn-danger  btn-sm " onClick={() => handleDeactivateTimeSlot(slot.id)}>Deactivate</button>
                       ) : (
                         <button className="btn btn-success  btn-sm " onClick={() => handleActivateTimeSlot(slot.id)}>Activate</button>
                       )}
@@ -301,7 +340,6 @@ const TimeSlotPage = () => {
             </button>
           </div>
         </div>
-
       )}
     </div>
   );
